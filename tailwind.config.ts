@@ -11,6 +11,17 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        purple: "#603AAB",
+        darkblue: "#100240",
+        gray: "#696969"
+      },
+      backgroundColor: {
+        purple: "#603AAB",
+        darkblue: "#100240",
+      },
+      fontFamily: {
+        geist: "Geist",
+        onest: "Onest",
       },
     },
   },
