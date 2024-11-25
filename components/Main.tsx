@@ -24,9 +24,9 @@ const Main = () => {
   }, []);
 
   return (
-    <div className="text-center mt-[6.1rem] md:mt-[9rem] flex items-center justify-center flex-col gap-6">
+    <div className="text-center mt-[7rem] md:mt-[9rem] flex items-center justify-center flex-col gap-6">
       <Header />
-      <h1 className="font-[800] text-4xl md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
+      <h1 className="font-[800] text-[2.1rem] md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
         What&#39;s For{" "}
         <mark
           className={`bg-transparent text-purple transition-opacity duration-500 inline-block ${
@@ -34,7 +34,7 @@ const Main = () => {
           }`}
         >
           {currentWord}{" "}?
-        </mark>{" "}
+        </mark>{" "}<br className="md:hidden"/>
         Let Our AI Assist In The Prep
       </h1>
       <p className="text-gray font-medium w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
@@ -42,21 +42,21 @@ const Main = () => {
         ingredients you have on hand, and we&#39;ll provide the perfect recipe
         and help you need.
       </p>
-      <div className="border border-purple mt-1 border-opacity-10 py-1 px-3 flex items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full">
+      <div className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full">
         <label
           htmlFor="upload"
-          className="bg-white select-none font-medium py-3 px-5 rounded-full inline-flex items-center w-[66%] justify-start text-gray text-[0.8rem] gap-4"
+          className="select-none shadow-sm text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-3"
         >
           <UploadIcon />
-          Upload Image | 5MB max.
+          <span>Upload Image | 5MB max.</span>
         </label>
-        <button className="m-1 bg-purple text-[0.8rem] border-4 border-double text-white px-8 py-2 rounded-full">
+        <button className="bg-purple text-[0.8rem] border-4 border-double text-white px-8 py-2 rounded-full">
           Generate recipe
         </button>
       </div>
       <input
         type="file"
-        accept=".png, .jpeg, .jpg, .gif, .bmp"
+        accept=".png, .jpeg, .jpg, .gif, .webp, .bmp"
         id="upload"
         className="hidden"
       />
