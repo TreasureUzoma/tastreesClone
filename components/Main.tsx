@@ -109,9 +109,13 @@ const Main = () => {
 
   try {
      
-    // help pass path to file to api
+    const formData = new FormData();
+    files.forEach((file) => formData.append("images", file));
+    formData.append("imagePath", "/"); // Add the imagePath if required
+    
     const response = await fetch("/api/upload", {
       method: "POST",
+      body: formData,
     });
 
     if (!response.ok) {
