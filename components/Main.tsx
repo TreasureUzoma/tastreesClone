@@ -151,6 +151,7 @@ const Main = () => {
         type="file"
         accept=".png, .jpeg, .jpg, .gif, .webp, .bmp"
         id="upload"
+        multiple
         className="hidden"
         onChange={handleFileChange}
       />
