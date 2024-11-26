@@ -11,10 +11,23 @@ const Main = () => {
   const [currentWord, setCurrentWord] = useState("Dinner");
   const [fade, setFade] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [blurMessages, setBlurMessages] = useState<string[]>([]);
+  const [currentBlurMessage, setCurrentBlurMessage] = useState<string>("");
 
   const words = ["Dinner", "Lunch", "Breakfast", "Snacks", "Brunch"];
+  // Gen Z-style messages
+  const genZMessages = [
+    "Hang tight, your recipe's coming!",
+    "Big brain AI at work! 🍴",
+    "Your food is about to get leveled up. 🔥",
+    "Just a sec, cooking up something awesome! 👨‍🍳",
+    "Almost there... let’s get this meal ready! 😎",
+    "We’re prepping that meal for you. 👏",
+    "Chillin' while your recipe gets made.",
+  ];
 
+  // Cycle through words with fade effect
   useEffect(() => {
     let wordIndex = 0;
     const interval = setInterval(() => {
@@ -28,19 +41,24 @@ const Main = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const truncateFileName = (name: string) => {
-    const words = name.split(" ");
-    if (words.length > 7) {
-      return words.slice(0, 7).join(" ") + "...";
+  // Update blur screen messages with Gen Z responses
+  useEffect(() => {
+    if (isLoading && blurMessages.length > 0) {
+      let index = 0;
+      setCurrentBlurMessage(blurMessages[index]);
+      const interval = setInterval(() => {
+        index = (index + 1) % blurMessages.length;
+        setCurrentBlurMessage(blurMessages[index]);
+      }, 2000);
+      return () => clearInterval(interval);
     }
-    return name;
-  };
+  }, [isLoading, blurMessages]);
 
+  // File validation and state update
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files;
 
-    const files = event.target.files;
-
-    if (!files || files.length === 0) {
+    if (!selectedFiles || selectedFiles.length === 0) {
       toast({
         description: "Please upload at least one image.",
         variant: "destructive",
@@ -48,50 +66,94 @@ const Main = () => {
       return;
     }
 
-    if (files.length > 1) {
+    const validFiles: File[] = [];
+    Array.from(selectedFiles).forEach((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          description: `${file.name} exceeds 5MB. Skipping this file.`,
+          variant: "destructive",
+        });
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    if (validFiles.length === 0) {
       toast({
-        description: "You can upload only one image at a time.",
+        description: "No valid files to upload.",
         variant: "destructive",
       });
       return;
     }
 
-    const file = files[0];
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        description: "File size exceeds 5MB. Please upload a smaller file.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setFileName(truncateFileName(file.name));
-
+    setFiles((prevFiles) => [...prevFiles, ...validFiles]);
   };
 
-  const handleButtonClick = async () => {
-    if (!fileName) {
-      toast({
-        description: "Please upload a file before generating a recipe.",
-        variant: "destructive",
-      });
-      return;
-      
-    }
-    setIsLoading(true);
+  // Remove individual file
+  const removeFile = (index: number) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const removeFile = () => {
-    setFileName(null);
-    const fileInput = document.getElementById("upload") as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = ""; // Clear file input
+  // Upload files and fetch recipe details
+ const handleButtonClick = async () => {
+  if (files.length === 0) {
+    toast({
+      description: "Please upload at least one file before generating a recipe.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsLoading(true);
+  setBlurMessages(genZMessages); // Use Gen Z-style messages
+
+  try {
+     
+    // help pass path to file to api
+    const response = await fetch("/api/upload", {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload files.");
     }
-  };
+
+    const data = await response.json();
+    setBlurMessages([data.message]); // Display server's success message
+    setTimeout(() => setIsLoading(false), 2000); // Close blur screen after success
+
+    // Optionally, handle analysis results from the server response
+    if (data.analysis) {
+      // You can show the analysis result from AI here
+      console.log(data.analysis);
+    }
+  } catch (error) {
+    setBlurMessages(["Sorry, something went wrong. Please try again."]);
+    setTimeout(() => setIsLoading(false), 4000); // Close blur screen after showing error
+  }
+};
+
+  
+
+  // Handle timeout situation
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        setIsLoading(false);
+        setBlurMessages(["Taking too long... please try the app directly!"]);
+      }, 20000); // Timeout after 20 seconds
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
 
   return (
     <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
-      {isLoading && <BlurScreen />}
+      {isLoading && (
+        <BlurScreen
+          header={currentBlurMessage}
+          text="Sit tight, we're working on your recipe!"
+        />
+      )}
       <Header />
       <h1 className="font-[800] text-[1.8rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
         What&#39;s For{" "}
@@ -100,15 +162,13 @@ const Main = () => {
             fade ? "opacity-100" : "opacity-0"
           }`}
         >
-          {currentWord} ?
+          {currentWord}?
         </mark>{" "}
-        <br className="md:hidden" />
         Let Our AI Assist In The Prep
       </h1>
       <p className="text-gray w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
-        Upload a picture of the meal you want to prepare, or even the
-        ingredients you have on hand, and we&#39;ll provide the perfect recipe
-        and help you need.
+        Upload pictures of the meal you want to prepare or ingredients, and
+        we&#39;ll provide the perfect recipe.
       </p>
       <form
         onSubmit={(e) => e.preventDefault()} // Prevent form submission
@@ -118,17 +178,20 @@ const Main = () => {
           htmlFor="upload"
           className="select-none shadow-sm shadow-4 w-[70%] text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
         >
-          {fileName ? (
-            <>
-              <button
-                type="button"
-                className="text-gray font-medium text-lg"
-                onClick={removeFile}
+          {files.length > 0 ? (
+            <span className="flex items-center jusify-center gap-2">
+              <span
+                className="
+              text-xl"
               >
                 &times;
-              </button>
-              <span className="truncate">{fileName}</span>
-            </>
+              </span>
+              {files.map((file, index) => (
+                <span key={index} className="inline truncate">
+                  {file.name}
+                </span>
+              ))}
+            </span>
           ) : (
             <>
               <UploadIcon />
@@ -136,6 +199,14 @@ const Main = () => {
             </>
           )}
         </label>
+        <input
+          type="file"
+          accept=".png, .jpeg, .heic, .webp, .heif, .jpg"
+          id="upload"
+          multiple
+          className="hidden"
+          onChange={handleFileChange}
+        />
         <button
           type="button"
           onClick={handleButtonClick}
@@ -144,17 +215,9 @@ const Main = () => {
           }`}
           disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "Generate recipe"}
+          {isLoading ? "Loading..." : "Generate Recipe"}
         </button>
       </form>
-      <input
-        type="file"
-        accept=".png, .jpeg, .jpg, .gif, .webp, .bmp"
-        id="upload"
-        multiple
-        className="hidden"
-        onChange={handleFileChange}
-      />
     </div>
   );
 };
