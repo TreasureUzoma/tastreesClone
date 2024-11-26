@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Tastrees AI Clone by Treasure Uzoma",
@@ -23,7 +24,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&amp;display=swap"
         />
       </head>
-      <body>{children}</body>
+
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
