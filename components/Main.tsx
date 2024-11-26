@@ -24,9 +24,9 @@ const Main = () => {
   }, []);
 
   return (
-    <div className="text-center mt-[7rem] md:mt-[9rem] flex items-center justify-center flex-col gap-6">
+    <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
       <Header />
-      <h1 className="font-[800] text-[2.1rem] md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
+      <h1 className="font-[800] text-[1.8rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
         What&#39;s For{" "}
         <mark
           className={`bg-transparent text-purple transition-opacity duration-500 inline-block ${
@@ -45,7 +45,7 @@ const Main = () => {
       <div className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full">
         <label
           htmlFor="upload"
-          className="select-none shadow-sm text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-3"
+          className="select-none shadow-sm w-[70%] text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-3"
         >
           <UploadIcon />
           <span>Upload Image | 5MB max.</span>
