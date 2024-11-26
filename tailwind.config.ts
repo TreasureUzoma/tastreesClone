@@ -29,8 +29,8 @@ export default {
       },
       keyframes: {
         expand: {
-          "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.2)" },
+          "0%, 100%": { transform: "scale(0.9)" },
+          "50%": { transform: "scale(1.3)" },
         },
       },
       borderRadius: {

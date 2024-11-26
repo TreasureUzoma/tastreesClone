@@ -14,7 +14,7 @@ const BlurScreen = ({ header = "Lorem ipsum dolo sit amen", text = "This will on
           className="animate-expand" // Apply expanding animation to the image
         />
         <div className="flex flex-col gap-2 text-gray">
-          <h3 className="font-semibold text-[1.2rem] animate-expand">
+          <h3 className="font-semibold text-[1.2rem]">
             {header}
           </h3>
           <p className="text">{text}</p>
