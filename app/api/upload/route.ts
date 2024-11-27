@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing GEMINI_API_KEY." }, { status: 500 });
     }
 
-    const { images } = await req.json();
+    const data = await req.json();
+    const { images } = data;
 
     if (!images || !Array.isArray(images) || images.length === 0) {
       return NextResponse.json({ error: "No images provided." }, { status: 400 });
@@ -29,24 +30,29 @@ export async function POST(req: NextRequest) {
 
     const responses = await Promise.all(
       images.map(async (imageBase64: string) => {
-        const result = await model.generateContent([
-          prompt,
-          {
-            inlineData: {
-              data: imageBase64,
-              mimeType: "image/jpeg",
+        try {
+          const result = await model.generateContent([
+            prompt,
+            {
+              fileData: {
+                fileUri: imageBase64,
+                mimeType: "image/jpeg",
+              },
             },
-          },
-        ]);
+          ]);
 
-        return result.response?.text() || "No response from the model.";
+          return result.response?.text() || "No response from the model.";
+        } catch (error) {
+          console.error("Error processing image:", error);
+          return "Error processing image.";
+        }
       })
     );
 
     return NextResponse.json({ message: "Files processed successfully.", analysis: responses }, { status: 200 });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Error processing request:", error);
-    return NextResponse.json({ error: error || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 

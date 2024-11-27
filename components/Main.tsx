@@ -127,6 +127,7 @@ const Main = () => {
         console.log(data.analysis); // Log or process AI analysis results
       }
     } catch (error) {
+      console.log(error)
       setBlurMessages(["Sorry, something went wrong. Please try again."]);
       setTimeout(() => setIsLoading(false), 4000); // Close blur screen after showing error
     }
