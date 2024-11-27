@@ -50,9 +50,9 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json({ message: "Files processed successfully.", analysis: responses }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error processing request:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error || "Internal Server Error" }, { status: 500 });
   }
 }
 
