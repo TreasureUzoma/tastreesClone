@@ -89,54 +89,59 @@ const Main = () => {
     setFiles((prevFiles) => [...prevFiles, ...validFiles]);
   };
 
-  // Remove individual file
-  const removeFile = (index: number) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  const handleButtonClick = async () => {
+    if (files.length === 0) {
+      toast({
+        description: "Please upload at least one file before generating a recipe.",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+    setIsLoading(true);
+    setBlurMessages(genZMessages); // Use Gen Z-style messages
+  
+    try {
+      // Convert files to Base64 strings
+      const base64Files = await Promise.all(
+        files.map((file) => convertToBase64(file))
+      );
+  
+      // Send Base64 images to the backend
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: base64Files }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to upload files.");
+      }
+  
+      const data = await response.json();
+      setBlurMessages([data.message]); // Display server's success message
+      setTimeout(() => setIsLoading(false), 2000); // Close blur screen after success
+  
+      // Optionally, handle analysis results from the server response
+      if (data.analysis) {
+        console.log(data.analysis); // Log or process AI analysis results
+      }
+    } catch (error) {
+      setBlurMessages(["Sorry, something went wrong. Please try again."]);
+      setTimeout(() => setIsLoading(false), 4000); // Close blur screen after showing error
+    }
   };
-
-  // Upload files and fetch recipe details
- const handleButtonClick = async () => {
-  if (files.length === 0) {
-    toast({
-      description: "Please upload at least one file before generating a recipe.",
-      variant: "destructive",
+  
+  // Utility function to convert files to Base64
+  const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
     });
-    return;
-  }
-
-  setIsLoading(true);
-  setBlurMessages(genZMessages); // Use Gen Z-style messages
-
-  try {
-     
-    const formData = new FormData();
-    files.forEach((file) => formData.append("images", file));
-    formData.append("imagePath", "/"); // Add the imagePath if required
-    
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to upload files.");
-    }
-
-    const data = await response.json();
-    setBlurMessages([data.message]); // Display server's success message
-    setTimeout(() => setIsLoading(false), 2000); // Close blur screen after success
-
-    // Optionally, handle analysis results from the server response
-    if (data.analysis) {
-      // You can show the analysis result from AI here
-      console.log(data.analysis);
-    }
-  } catch (error) {
-    setBlurMessages(["Sorry, something went wrong. Please try again."]);
-    setTimeout(() => setIsLoading(false), 4000); // Close blur screen after showing error
-  }
-};
-
+  };
+  
   
 
   // Handle timeout situation
