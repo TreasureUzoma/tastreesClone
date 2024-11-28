@@ -30,7 +30,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
   const formattedFileSize = formatFileSize(fileSize);
 
   return (
-    <div className="mt-10 flex flex-col items-center justify-center fixed inset-0 z-30 bg-white py-7 gap-10">
+    <div className="mt-10 overflow-y-auto flex flex-col items-center justify-center fixed inset-0 z-30 bg-white py-7 gap-10">
       <div className="p-4 rounded-2xl bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
         <div className="w-full flex items-start justify-center gap-4">
           <span className="rounded-full p-1 bg-white border border-gray flex items-center justify-center shadow-md">
@@ -58,7 +58,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
         </div>
       </div>
       <div className="w-[92%] px-3 rounded-lg py-8 max-w-[600px] shadow-[0_1px_3px_rgba(180,180,180,0.2)] flex flex-col gap-11">
-        <p className="text-[0.9rem] font-onest">{contents}</p>
+        <p className="text-[0.9rem] font-onest text-left">{contents}</p>
         {youtubeLink && (
           <iframe
             width="100%"

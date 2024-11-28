@@ -165,6 +165,15 @@ const Main: React.FC = () => {
       }
 
       if (Array.isArray(data.analysis)) {
+        if (data.analysis.includes("NOT FOUND")) {
+          toast({
+            description:
+              "No food-related item was found in your picture. Please try again with a different image.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          setFiles([]);
+        }
         // Handle arrays with potential embedded YouTube links
         const youtubeLink = data.analysis.find((item) =>
           /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
@@ -179,6 +188,7 @@ const Main: React.FC = () => {
               "No food-related item was found in your picture. Please try again with a different image.",
             variant: "destructive",
           });
+          setIsLoading(false);
           setFiles([]);
         } else {
           const linkMatch = data.analysis.match(

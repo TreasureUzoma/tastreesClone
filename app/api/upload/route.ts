@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 
       3. If it is not food-related, simply respond with 'NOT FOOD'
 
-      PS: youtube video link should be an embedded link for iframe tag
+      PS: youtube video link should be an embedded link for iframe tag, only reply with the link not tag like this (https://www.youtube.com/embed/watch/dQw4w9WgXcQ) without any label to it
     `;
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
