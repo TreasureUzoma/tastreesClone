@@ -7,7 +7,11 @@ import UploadIcon from "./icons/UploadIcon";
 import ReplyUi from "./ReplyUi";
 import { useToast } from "@/hooks/use-toast";
 
-const Main = () => {
+interface ApiResponse {
+  analysis: string | string[]; // Adjust based on actual API response structure
+}
+
+const Main: React.FC = () => {
   const { toast } = useToast();
 
   // States
@@ -148,7 +152,7 @@ const Main = () => {
         body: JSON.stringify({ images: base64Files }),
       });
 
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
       setIsLoading(false);
 
       if (!response.ok) {
@@ -157,54 +161,42 @@ const Main = () => {
           description: "Something went wrong",
           variant: "destructive",
         });
-      } else {
-        if (Array.isArray(data.analysis)) {
-          if (data.analysis.includes("NOT FOOD")) {
-            toast({
-              description:
-                "No food-related item was found in your picture. Please try again with a different image.",
-              variant: "destructive",
-            });
-            setFiles([]);
-          } else {
-            // Handle arrays with potential embedded YouTube links
-            
-            const youtubeLink = (data.analysis as string[]).find((item: string) =>
-              /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
-            );
-            const linkMatch = data.analysis.match(youtubeLink);
-            setYoutubeLink(linkMatch ? linkMatch[0] : "");
-            setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
-            setReply(true);
-          }
-        } else if (typeof data.analysis === "string") {
-          const regex = /\bNOT FOUND\b/i;
-          if (regex.test(data.analysis)) {
-            toast({
-              description:
-                "No food-related item was found in your picture. Please try again with a different image.",
-              variant: "destructive",
-            });
-            setFiles([])
-          } else {
-            const linkRegex = /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/;
-            const linkMatch = data.analysis.match(linkRegex);
-            setYoutubeLink(linkMatch ? linkMatch[0] : "");
-            setResponseContent(data.analysis);
-            setReply(true);
-          }
-        } else {
-          console.error("Unexpected data type for analysis:", data.analysis);
-          setBlurMessages(["Sorry, something went wrong. Please try again."]);
-        }
-         
+        return;
       }
 
-      setTimeout(() => setIsLoading(false), 2000);
+      if (Array.isArray(data.analysis)) {
+        // Handle arrays with potential embedded YouTube links
+        const youtubeLink = data.analysis.find((item) =>
+          /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
+        );
+        setYoutubeLink(youtubeLink || "");
+        setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
+        setReply(true);
+      } else if (typeof data.analysis === "string") {
+        if (/NOT FOUND/i.test(data.analysis)) {
+          toast({
+            description:
+              "No food-related item was found in your picture. Please try again with a different image.",
+            variant: "destructive",
+          });
+          setFiles([]);
+        } else {
+          const linkMatch = data.analysis.match(
+            /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/
+          );
+          setYoutubeLink(linkMatch ? linkMatch[0] : "");
+          setResponseContent(data.analysis);
+          setReply(true);
+        }
+      } else {
+        console.error("Unexpected data type for analysis:", data.analysis);
+        setBlurMessages(["Sorry, something went wrong. Please try again."]);
+      }
     } catch (error) {
       console.error(error);
       setBlurMessages(["Sorry, something went wrong. Please try again."]);
-      setTimeout(() => setIsLoading(false), 2000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -218,7 +210,7 @@ const Main = () => {
       )}
       {reply && (
         <ReplyUi
-        fileSize={files[0]?.size?.toString() || "0"}
+          fileSize={files[0]?.size?.toString() || "0"}
           contents={responseContent}
           youtubeLink={youtubeLink}
           fileName={files[0]?.name || ""}

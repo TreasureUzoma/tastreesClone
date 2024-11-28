@@ -4,8 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
 // Helper function to format file size
-const formatFileSize = (size: string) => {
-  const sizeInBytes = parseInt(size, 10); // Convert size to a number
+const formatFileSize = (fileSize: string) => {
+  const sizeInBytes = parseInt(fileSize, 10); // Convert size to a number
   if (isNaN(sizeInBytes)) return "0 KB"; // If size is invalid, return 0 KB
 
   if (sizeInBytes < 1024) {
