@@ -30,11 +30,11 @@ export async function POST(req: NextRequest) {
     const prompt = `
       Analyze the uploaded image(s) and:
       1. If it is cooked food reply like this: 
-       This food is know as FoodNme, also known as a or b. Then a fact about the food. 
-      Recipe for [food name]
-      Yields:x serving, Prep time: x minutes, cook time, x minutes
+       This food is know as <b>FoodNme</b>, also known as a or b. Then a fact about the food.\n\n
+      <b>Recipe for [food name]</b>
+       <b>Yields:</b>x serving, Prep time: x minutes, cook time, x minutes
 
-      Ingedients:
+      <b>Ingedients:</b>
       [recipe in ordered list]
 
       Equipment:
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
 
       2. If it is raw food, provide what you think its best to cook with and then like:
-      You have these ingredients available
+      You have these ingredients available <b>items</b>\n\n
        The best food you can prepare is: Then a fact about the food. 
       Recipe for [food name]
       Yields:x serving, Prep time: x minutes, cook time, x minutes
@@ -77,14 +77,15 @@ export async function POST(req: NextRequest) {
       [your stuff]
 
       Pro Chef Tips:
-      [Your stuff]
+      <em>[Your stuff]</em>
 
       [youtube video link]
 
       3. If it is not food-related, simply respond with 'NOT FOOD'
 
       PS: youtube video link should be an embedded link for iframe tag, only reply with the link not tag like this e.g (https://www.youtube.com/embed/watch/dQw4w9WgXcQ). regex waiting: (/(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/) without watch?v= or any label to it
-    `;
+      PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
+      `;
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 

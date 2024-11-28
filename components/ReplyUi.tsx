@@ -2,6 +2,7 @@ import UploadIcon from "./icons/UploadIcon";
 import CopySvg from "./icons/CopySvg";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown"
 
 // Helper function to format file size
 const formatFileSize = (fileSize: string) => {
@@ -16,7 +17,6 @@ const formatFileSize = (fileSize: string) => {
     return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`; // Display MB if greater than 1MB
   }
 };
-
 const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = "" }) => {
   const { toast } = useToast();
 
@@ -30,8 +30,8 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
   const formattedFileSize = formatFileSize(fileSize);
 
   return (
-    <div className="pb-[7.2rem] md:pb-[9.4rem] flex flex-col items-center justify-center fixed inset-0 z-30 bg-white py-7 gap-10">
-      <div className="p-4 rounded-2xl overflow-y-auto bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
+    <div className="mt-[4rem] py-[2rem] md:mt-[9.4rem] overflow-y-auto flex flex-col items-center justify-center z-30 bg-white gap-10">
+      <div className="p-4 rounded-2xl bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
         <div className="w-full flex items-start justify-center gap-4">
           <span className="rounded-full p-1 bg-white border border-gray flex items-center justify-center shadow-md">
             <Image
@@ -58,7 +58,9 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
         </div>
       </div>
       <div className="w-[92%] px-3 rounded-lg py-8 max-w-[600px] shadow-[0_1px_3px_rgba(180,180,180,0.2)] flex flex-col gap-11">
-        <p className="text-[0.9rem] font-onest text-left">{contents}</p>
+        <ReactMarkdown className="text-[0.9rem] font-onest text-left pre-wrap">
+          {contents.replace(/\n/gi, '&nbsp;\n\n')}
+        </ReactMarkdown>
         {youtubeLink && (
           <iframe
             width="100%"

@@ -219,7 +219,14 @@ const Main: React.FC = () => {
     }
   };
 
-  return (
+  return reply ? (
+    <ReplyUi
+      fileSize={files[0]?.size?.toString() || "0"}
+      contents={responseContent}
+      youtubeLink={youtubeLink}
+      fileName={files[0]?.name || ""}
+    />
+  ) : (
     <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
       {isLoading && (
         <BlurScreen
@@ -227,15 +234,9 @@ const Main: React.FC = () => {
           text="Sit tight, we're working on your recipe!"
         />
       )}
-      {reply && (
-        <ReplyUi
-          fileSize={files[0]?.size?.toString() || "0"}
-          contents={responseContent}
-          youtubeLink={youtubeLink}
-          fileName={files[0]?.name || ""}
-        />
-      )}
+  
       <Header />
+  
       <h1 className="font-[800] text-[1.85rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.4px] w-[90%] max-w-[600px]">
         What&#39;s For{" "}
         <mark
@@ -245,12 +246,14 @@ const Main: React.FC = () => {
         >
           {currentWord}
         </mark>{" "}
-        <br className="sm:hidden" />Let Our AI Assist In The Prep
+        <br className="sm:hidden" />
+        Let Our AI Assist In The Prep
       </h1>
+  
       <p className="text-gray w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
-        Share photos of the dish you plan to make or its ingredients, and
-        we&#39;ll create the ideal recipe for you.
+        Share photos of the dish you plan to make or its ingredients, and we&#39;ll create the ideal recipe for you.
       </p>
+  
       <form
         onSubmit={(e) => e.preventDefault()}
         className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
@@ -263,7 +266,10 @@ const Main: React.FC = () => {
             <span className="flex items-center justify-center gap-2">
               <span className="text-[1.2rem] font-thin">&times;</span>
               {files.map((file, index) => (
-                <span key={index} className="inline text-purple w-[60%] max-w-[100px] md:max-w-[250px] truncate">
+                <span
+                  key={index}
+                  className="inline text-purple w-[60%] max-w-[100px] md:max-w-[250px] truncate"
+                >
                   {file.name}
                 </span>
               ))}
@@ -275,6 +281,7 @@ const Main: React.FC = () => {
             </>
           )}
         </label>
+  
         <input
           id="upload"
           type="file"
@@ -283,6 +290,7 @@ const Main: React.FC = () => {
           hidden
           onChange={handleFileChange}
         />
+  
         <button
           type="button"
           onClick={handleButtonClick}
@@ -296,6 +304,6 @@ const Main: React.FC = () => {
       </form>
     </div>
   );
-};
-
+  
+}
 export default Main;
