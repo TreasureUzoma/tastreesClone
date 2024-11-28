@@ -8,7 +8,8 @@ import ReplyUi from "./ReplyUi";
 import { useToast } from "@/hooks/use-toast";
 
 interface ApiResponse {
-  analysis: string | string[]; // Adjust based on actual API response structure
+  analysis: string | string[]; 
+  embedLinks: string | string[];
 }
 
 const Main: React.FC = () => {
@@ -80,7 +81,9 @@ const Main: React.FC = () => {
   }, [isLoading]);
 
   // File validation and upload
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedFiles = event.target.files;
 
     if (!selectedFiles || selectedFiles.length === 0) {
@@ -132,7 +135,8 @@ const Main: React.FC = () => {
   const handleButtonClick = async () => {
     if (files.length === 0) {
       toast({
-        description: "Please upload at least one file before generating a recipe.",
+        description:
+          "Please upload at least one file before generating a recipe.",
         variant: "destructive",
       });
       return;
@@ -166,9 +170,11 @@ const Main: React.FC = () => {
 
       if (Array.isArray(data.analysis)) {
         console.log(data);
-        if (data.analysis.includes("NOT FOOD") || data.analysis.includes('NOT FOOD\\n'
-          // 3 checks cus gemini is crazy
-        ) || data.analysis.includes(`NOT FOOD\n`)) {
+        if (
+          data.analysis.includes("NOT FOOD") ||
+          data.analysis.includes("NOT FOOD\\n") ||
+          data.analysis.includes(`NOT FOOD\n`)
+        ) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
@@ -177,40 +183,36 @@ const Main: React.FC = () => {
           setIsLoading(false);
           setReply(false);
           setFiles([]);
-          return ;
+          return;
         }
-        else 
-        {
-          // Handle arrays with potential embedded YouTube links
-          const youtubeLink = data.analysis.find((item) =>
-            /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
-          );
-          setYoutubeLink(youtubeLink || "");
-          setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
-          setReply(true);
-        }
+        setResponseContent(data.analysis.join(" ")); // Join array into a string
       } else if (typeof data.analysis === "string") {
-        if (/NOT FOOD/i.test(data.analysis) || data.analysis.includes("NOT FOOD")) {
+        if (
+          /NOT FOOD/i.test(data.analysis) ||
+          data.analysis.includes("NOT FOOD")
+        ) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
             variant: "destructive",
           });
           setIsLoading(false);
-          setReply(false)
+          setReply(false);
           setFiles([]);
         } else {
-          const linkMatch = data.analysis.match(
-            /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/
-          );
-          setYoutubeLink(linkMatch ? linkMatch[0] : "");
-          setResponseContent(data.analysis);
-          setReply(true);
+          setResponseContent(data.analysis); 
         }
       } else {
         console.error("Unexpected data type for analysis:", data.analysis);
         setBlurMessages(["Sorry, something went wrong. Please try again."]);
       }
+
+      if (Array.isArray(data.embedLinks)) {
+        setYoutubeLink(data.embedLinks.join(" "));
+      } else {
+        setYoutubeLink(data.embedLinks);
+      }
+      setReply(true);
     } catch (error) {
       console.error(error);
       setBlurMessages(["Sorry, something went wrong. Please try again."]);
@@ -234,9 +236,9 @@ const Main: React.FC = () => {
           text="Sit tight, we're working on your recipe!"
         />
       )}
-  
+
       <Header />
-  
+
       <h1 className="font-[800] text-[1.85rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.4px] w-[90%] max-w-[600px]">
         What&#39;s For{" "}
         <mark
@@ -249,11 +251,12 @@ const Main: React.FC = () => {
         <br className="sm:hidden" />
         Let Our AI Assist In The Prep
       </h1>
-  
+
       <p className="text-gray w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
-        Share photos of the dish you plan to make or its ingredients, and we&#39;ll create the ideal recipe for you.
+        Share photos of the dish you plan to make or its ingredients, and
+        we&#39;ll create the ideal recipe for you.
       </p>
-  
+
       <form
         onSubmit={(e) => e.preventDefault()}
         className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
@@ -270,7 +273,9 @@ const Main: React.FC = () => {
                   key={index}
                   className="inline text-purple w-[60%] md:max-w-[250px]"
                 >
-                  {file.name.length> 8 ? `${file.name.slice(0, 10)}...` : file.name}
+                  {file.name.length > 8
+                    ? `${file.name.slice(0, 10)}...`
+                    : file.name}
                 </span>
               ))}
             </span>
@@ -281,7 +286,7 @@ const Main: React.FC = () => {
             </>
           )}
         </label>
-  
+
         <input
           id="upload"
           type="file"
@@ -290,7 +295,7 @@ const Main: React.FC = () => {
           hidden
           onChange={handleFileChange}
         />
-  
+
         <button
           type="button"
           onClick={handleButtonClick}
@@ -304,6 +309,5 @@ const Main: React.FC = () => {
       </form>
     </div>
   );
-  
 }
 export default Main;
