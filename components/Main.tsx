@@ -172,26 +172,29 @@ const Main: React.FC = () => {
             variant: "destructive",
           });
           setIsLoading(false);
+          setReply(false);
           setFiles([]);
           return ;
         }
         else 
-        {// Handle arrays with potential embedded YouTube links
-        const youtubeLink = data.analysis.find((item) =>
-          /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
-        );
-        setYoutubeLink(youtubeLink || "");
-        setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
-        setReply(true);
-      }
+        {
+          // Handle arrays with potential embedded YouTube links
+          const youtubeLink = data.analysis.find((item) =>
+            /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
+          );
+          setYoutubeLink(youtubeLink || "");
+          setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
+          setReply(true);
+        }
       } else if (typeof data.analysis === "string") {
-        if (/NOT FOUND/i.test(data.analysis)) {
+        if (/NOT FOUND/i.test(data.analysis) || data.analysis.includes("NOT FOUND")) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
             variant: "destructive",
           });
           setIsLoading(false);
+          setReply(false)
           setFiles([]);
         } else {
           const linkMatch = data.analysis.match(
