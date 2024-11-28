@@ -3,17 +3,21 @@
 import React, { useState, useEffect } from "react";
 import BlurScreen from "./BlurScreen";
 import Header from "./Header";
-import UploadIcon from "./UploadIcon";
+import UploadIcon from "./icons/UploadIcon";
+import ReplyUi from "./ReplyUi";
 import { useToast } from "@/hooks/use-toast";
 
 const Main = () => {
   const { toast } = useToast();
 
   // States
-  const [currentWord, setCurrentWord] = useState("Dinner");
-  const [fade, setFade] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentWord, setCurrentWord] = useState<string>("Dinner");
+  const [fade, setFade] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [reply, setReply] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [responseContent, setResponseContent] = useState<string>(""); // AI's response
+  const [youtubeLink, setYoutubeLink] = useState<string>(""); // Extracted YouTube link
   const [blurMessages, setBlurMessages] = useState<string[]>([]);
   const [currentBlurMessage, setCurrentBlurMessage] = useState<string>("");
 
@@ -26,7 +30,7 @@ const Main = () => {
     "Just a sec, cooking up something awesome! 👨‍🍳",
     "Almost there... let’s get this meal ready! 😎",
     "We’re prepping that meal for you. 👏",
-    "Chillin' while your recipe gets made.",
+    "Keep chillin' while your recipe gets made.",
   ];
 
   // Word cycling effect
@@ -112,7 +116,6 @@ const Main = () => {
       reader.readAsDataURL(file);
       reader.onload = () => {
         if (typeof reader.result === "string") {
-          // Safely handle result
           resolve(reader.result.split(",")[1] || ""); // Extract Base64 data
         } else {
           reject(new Error("File reading error"));
@@ -121,8 +124,7 @@ const Main = () => {
       reader.onerror = (error) => reject(error);
     });
   };
-  
-  
+
   const handleButtonClick = async () => {
     if (files.length === 0) {
       toast({
@@ -131,37 +133,80 @@ const Main = () => {
       });
       return;
     }
-  
+
     setIsLoading(true);
     setBlurMessages(genZMessages);
-  
+
     try {
       const base64Files = await Promise.all(
         files.map((file) => convertToBase64(file))
       );
-  
+
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ images: base64Files }),
       });
-  
+
       const data = await response.json();
-  
+      setIsLoading(false);
+
       if (!response.ok) {
-        setBlurMessages([data.message]);
+        toast({
+          title: "OOPS",
+          description: "Something went wrong",
+          variant: "destructive",
+        });
       } else {
-        setBlurMessages([data.analysis]);
+        if (Array.isArray(data.analysis)) {
+          if (data.analysis.includes("NOT FOOD")) {
+            toast({
+              description:
+                "No food-related item was found in your picture. Please try again with a different image.",
+              variant: "destructive",
+            });
+            setFiles([]);
+          } else {
+            // Handle arrays with potential embedded YouTube links
+            
+            const youtubeLink = (data.analysis as string[]).find((item: string) =>
+              /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
+            );
+            const linkMatch = data.analysis.match(youtubeLink);
+            setYoutubeLink(linkMatch ? linkMatch[0] : "");
+            setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
+            setReply(true);
+          }
+        } else if (typeof data.analysis === "string") {
+          const regex = /\bNOT FOUND\b/i;
+          if (regex.test(data.analysis)) {
+            toast({
+              description:
+                "No food-related item was found in your picture. Please try again with a different image.",
+              variant: "destructive",
+            });
+            setFiles([])
+          } else {
+            const linkRegex = /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/;
+            const linkMatch = data.analysis.match(linkRegex);
+            setYoutubeLink(linkMatch ? linkMatch[0] : "");
+            setResponseContent(data.analysis);
+            setReply(true);
+          }
+        } else {
+          console.error("Unexpected data type for analysis:", data.analysis);
+          setBlurMessages(["Sorry, something went wrong. Please try again."]);
+        }
+         
       }
-  
+
       setTimeout(() => setIsLoading(false), 2000);
     } catch (error) {
       console.error(error);
       setBlurMessages(["Sorry, something went wrong. Please try again."]);
-      setTimeout(() => setIsLoading(false), 4000);
+      setTimeout(() => setIsLoading(false), 2000);
     }
   };
-  
 
   return (
     <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
@@ -171,8 +216,16 @@ const Main = () => {
           text="Sit tight, we're working on your recipe!"
         />
       )}
+      {reply && (
+        <ReplyUi
+        fileSize={files[0]?.size?.toString() || "0"}
+          contents={responseContent}
+          youtubeLink={youtubeLink}
+          fileName={files[0]?.name || ""}
+        />
+      )}
       <Header />
-      <h1 className="font-[800] text-[1.8rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.5px] w-[88%] max-w-[600px]">
+      <h1 className="font-[800] text-[1.85rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.4px] w-[90%] max-w-[600px]">
         What&#39;s For{" "}
         <mark
           className={`bg-transparent text-purple transition-opacity duration-500 inline-block ${
@@ -181,15 +234,15 @@ const Main = () => {
         >
           {currentWord}
         </mark>{" "}
-        Let Our AI Assist In The Prep
+        <br className="sm:hidden" />Let Our AI Assist In The Prep
       </h1>
       <p className="text-gray w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
-        Upload pictures of the meal you want to prepare or ingredients, and
-        we&#39;ll provide the perfect recipe.
+        Share photos of the dish you plan to make or its ingredients, and
+        we&#39;ll create the ideal recipe for you.
       </p>
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
+        className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
       >
         <label
           htmlFor="upload"
@@ -197,9 +250,9 @@ const Main = () => {
         >
           {files.length > 0 ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="text-xl">&times;</span>
+              <span className="text-[1.2rem] font-thin">&times;</span>
               {files.map((file, index) => (
-                <span key={index} className="inline truncate">
+                <span key={index} className="inline text-purple w-[60%] truncate">
                   {file.name}
                 </span>
               ))}
@@ -207,16 +260,16 @@ const Main = () => {
           ) : (
             <>
               <UploadIcon />
-              <span>Upload Image(s) | 5MB max.</span>
+              <span>Upload Image(s)</span>
             </>
           )}
         </label>
         <input
-          type="file"
-          accept=".png, .jpeg, .heic, .webp, .heif, .jpg"
           id="upload"
+          type="file"
+          accept=".png,.jpeg,.jpg,.heic,.webp,.heif"
           multiple
-          className="hidden"
+          hidden
           onChange={handleFileChange}
         />
         <button

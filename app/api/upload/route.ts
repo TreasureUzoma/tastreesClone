@@ -29,9 +29,61 @@ export async function POST(req: NextRequest) {
     // Prepare prompt
     const prompt = `
       Analyze the uploaded image(s) and:
-      1. If it is raw food, describe how it can be prepared and cooked.
-      2. If it is cooked food, provide preparation details and a related YouTube video link for reference.
-      3. If it is not food-related, simply respond with 'NOT FOOD'.
+      1. If it is cooked food reply like this: 
+       This food is know as FoodNme, also known as a or b. Then a fact about the food. 
+      Recipe for [food name]
+      Yields:x serving, Prep time: x minutes, cook time, x minutes
+
+      Ingedients:
+      [recipe in ordered list]
+
+      Equipment:
+      [a paragraph of equipment]
+
+      Instructions:
+      [do your stuff]
+
+      Plating:
+      Serve [Foodname] as [your stuff]
+
+      Nutritional Value (per serving, approximate)
+      [your stuff]
+
+      Pro Chef Tips:
+      [Your stuff]
+
+      [youtube video link]
+
+
+      2. If it is raw food, provide what you think its best to cook with and then like:
+      You have these ingredients available
+       The best food you can prepare is: Then a fact about the food. 
+      Recipe for [food name]
+      Yields:x serving, Prep time: x minutes, cook time, x minutes
+
+      Ingedients:
+      [recipe in ordered list]
+
+      Equipment:
+      [a paragraph of equipment]
+
+      Instructions:
+      [do your stuff]
+
+      Plating:
+      Serve [Foodname] as [your stuff]
+
+      Nutritional Value (per serving, approximate)
+      [your stuff]
+
+      Pro Chef Tips:
+      [Your stuff]
+
+      [youtube video link]
+
+      3. If it is not food-related, simply respond with 'NOT FOOD'
+
+      PS: youtube video link should be an embedded link for iframe tag
     `;
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
