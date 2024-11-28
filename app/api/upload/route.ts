@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 
       3. If it is not food-related, simply respond with 'NOT FOOD'
 
-      PS: youtube video link should be an embedded link for iframe tag, only reply with the link not tag like this e.g (https://www.youtube.com/embed/watch/dQw4w9WgXcQ). regex waiting: (/(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/) without watch?v= or any label to it
+      PS: youtube video link should be an embedded link for iframe tag, dont write iframe tag only link only reply with the link not tag like this e.g (https://www.youtube.com/embed/watch/dQw4w9WgXcQ). but instead return https://www.youtube.com/embed/watch/videoid with an actual video id where  without watch?v= in the link, actual id, make sure id exist. thats the most important answer and it must match the refrence i gave u with different id, if you coudnt find, return any random video
       PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
       `;
 

@@ -3,6 +3,7 @@ import CopySvg from "./icons/CopySvg";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown"
+import jsPDF from "jspdf";
 
 // Helper function to format file size
 const formatFileSize = (fileSize: string) => {
@@ -20,11 +21,26 @@ const formatFileSize = (fileSize: string) => {
 const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = "" }) => {
   const { toast } = useToast();
 
-  const handleCopy = () => {
-    toast({
-      description: "Copied to clipboard.",
-    });
-  };
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(contents);
+      toast({
+        description: "Copied to clipboard.",
+      });
+    }
+    catch {
+      toast({
+        description: "Failed to copy to clipboard.",
+      });
+    }
+  }
+
+  const handleDownload = () => {
+    const doc = new jsPDF();
+
+    doc.text(contents, 10, 10)
+    doc.save("recipe.pdf")
+  }
 
   // Format the file size to KB or MB
   const formattedFileSize = formatFileSize(fileSize);
@@ -59,7 +75,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
       </div>
       <div className="w-[92%] px-3 rounded-lg py-8 max-w-[600px] shadow-[0_1px_3px_rgba(180,180,180,0.2)] flex flex-col gap-11">
         <ReactMarkdown className="text-[0.9rem] font-onest text-left pre-wrap">
-          {contents.replace(/\n/gi, '&nbsp;\n\n')}
+          {contents.replace(/\n/gi, '&nbsp;\n\n').replace(/(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/, "")}
         </ReactMarkdown>
         {youtubeLink && (
           <iframe
@@ -73,7 +89,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
           />
         )}
         <div className="flex items-center justify-between font-medium">
-          <button className="bg-purple text-[0.77rem] border-4 border-double text-white px-[0.96rem] py-[0.47rem] rounded-full flex items-center justify-center gap-2">
+          <button onClick={() => handleDownload()} className="bg-purple text-[0.77rem] border-4 border-double text-white px-[0.96rem] py-[0.47rem] rounded-full flex items-center justify-center gap-2">
             <UploadIcon className="fill-[white] rotate-180 w-[15px] h-[15px]" />
             <span>Download PDF</span>
           </button>
