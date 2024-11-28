@@ -166,7 +166,9 @@ const Main: React.FC = () => {
 
       if (Array.isArray(data.analysis)) {
         console.log(data);
-        if (data.analysis.includes("NOT FOOD")) {
+        if (data.analysis.includes("NOT FOOD") || data.analysis.includes('NOT FOOD\\n'
+          // 3 checks cus gemini is crazy
+        ) || data.analysis.includes(`NOT FOOD\n`)) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
@@ -261,7 +263,7 @@ const Main: React.FC = () => {
             <span className="flex items-center justify-center gap-2">
               <span className="text-[1.2rem] font-thin">&times;</span>
               {files.map((file, index) => (
-                <span key={index} className="inline text-purple w-[60%] truncate">
+                <span key={index} className="inline text-purple w-[60%] max-w-[100px] md:max-w-[250px] truncate">
                   {file.name}
                 </span>
               ))}
