@@ -165,7 +165,8 @@ const Main: React.FC = () => {
       }
 
       if (Array.isArray(data.analysis)) {
-        if (data.analysis.includes("NOT FOUND")) {
+        console.log(data);
+        if (data.analysis.includes("NOT FOOD")) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
@@ -187,7 +188,7 @@ const Main: React.FC = () => {
           setReply(true);
         }
       } else if (typeof data.analysis === "string") {
-        if (/NOT FOUND/i.test(data.analysis) || data.analysis.includes("NOT FOUND")) {
+        if (/NOT FOOD/i.test(data.analysis) || data.analysis.includes("NOT FOOD")) {
           toast({
             description:
               "No food-related item was found in your picture. Please try again with a different image.",
