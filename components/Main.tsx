@@ -8,15 +8,17 @@ import { useToast } from "@/hooks/use-toast";
 
 const Main = () => {
   const { toast } = useToast();
+
+  // States
   const [currentWord, setCurrentWord] = useState("Dinner");
-  const [fade, setFade] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fade, setFade] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [blurMessages, setBlurMessages] = useState<string[]>([]);
   const [currentBlurMessage, setCurrentBlurMessage] = useState<string>("");
 
+  // Constants
   const words = ["Dinner", "Lunch", "Breakfast", "Snacks", "Brunch"];
-  // Gen Z-style messages
   const genZMessages = [
     "Hang tight, your recipe's coming!",
     "Big brain AI at work! 🍴",
@@ -27,34 +29,49 @@ const Main = () => {
     "Chillin' while your recipe gets made.",
   ];
 
-  // Cycle through words with fade effect
+  // Word cycling effect
   useEffect(() => {
     let wordIndex = 0;
     const interval = setInterval(() => {
-      setFade(false); // Trigger fade out
+      setFade(false);
       setTimeout(() => {
-        wordIndex = (wordIndex + 1) % words.length; // Cycle through words
+        wordIndex = (wordIndex + 1) % words.length;
         setCurrentWord(words[wordIndex]);
-        setFade(true); // Trigger fade in
-      }, 600); // Match the CSS fade-out duration
-    }, 1900); // Word change interval
+        setFade(true);
+      }, 600);
+    }, 1900);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Update blur screen messages with Gen Z responses
+  // Blur message cycling
   useEffect(() => {
     if (isLoading && blurMessages.length > 0) {
       let index = 0;
       setCurrentBlurMessage(blurMessages[index]);
+
       const interval = setInterval(() => {
         index = (index + 1) % blurMessages.length;
         setCurrentBlurMessage(blurMessages[index]);
       }, 2000);
+
       return () => clearInterval(interval);
     }
   }, [isLoading, blurMessages]);
 
-  // File validation and state update
+  // Timeout handler
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        setIsLoading(false);
+        setBlurMessages(["Taking too long... please try the app directly!"]);
+      }, 20000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
+
+  // File validation and upload
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
 
@@ -89,6 +106,23 @@ const Main = () => {
     setFiles((prevFiles) => [...prevFiles, ...validFiles]);
   };
 
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          // Safely handle result
+          resolve(reader.result.split(",")[1] || ""); // Extract Base64 data
+        } else {
+          reject(new Error("File reading error"));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+  
+  
   const handleButtonClick = async () => {
     if (files.length === 0) {
       toast({
@@ -99,62 +133,35 @@ const Main = () => {
     }
   
     setIsLoading(true);
-    setBlurMessages(genZMessages); // Use Gen Z-style messages
+    setBlurMessages(genZMessages);
   
     try {
-      // Convert files to Base64 strings
       const base64Files = await Promise.all(
         files.map((file) => convertToBase64(file))
       );
   
-      // Send Base64 images to the backend
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ images: base64Files }),
       });
   
-      if (!response.ok) {
-        throw new Error("Failed to upload files.");
-      }
-  
       const data = await response.json();
-      setBlurMessages([data.message]); // Display server's success message
-      setTimeout(() => setIsLoading(false), 2000); // Close blur screen after success
   
-      // Optionally, handle analysis results from the server response
-      if (data.analysis) {
-        console.log(data.analysis); // Log or process AI analysis results
+      if (!response.ok) {
+        setBlurMessages([data.message]);
+      } else {
+        setBlurMessages([data.analysis]);
       }
+  
+      setTimeout(() => setIsLoading(false), 2000);
     } catch (error) {
-      console.log(error)
+      console.error(error);
       setBlurMessages(["Sorry, something went wrong. Please try again."]);
-      setTimeout(() => setIsLoading(false), 4000); // Close blur screen after showing error
+      setTimeout(() => setIsLoading(false), 4000);
     }
   };
   
-  // Utility function to convert files to Base64
-  const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-  
-  
-
-  // Handle timeout situation
-  useEffect(() => {
-    if (isLoading) {
-      const timeout = setTimeout(() => {
-        setIsLoading(false);
-        setBlurMessages(["Taking too long... please try the app directly!"]);
-      }, 20000); // Timeout after 20 seconds
-      return () => clearTimeout(timeout);
-    }
-  }, [isLoading]);
 
   return (
     <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
@@ -172,7 +179,7 @@ const Main = () => {
             fade ? "opacity-100" : "opacity-0"
           }`}
         >
-          {currentWord}?
+          {currentWord}
         </mark>{" "}
         Let Our AI Assist In The Prep
       </h1>
@@ -181,7 +188,7 @@ const Main = () => {
         we&#39;ll provide the perfect recipe.
       </p>
       <form
-        onSubmit={(e) => e.preventDefault()} // Prevent form submission
+        onSubmit={(e) => e.preventDefault()}
         className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
       >
         <label
@@ -189,13 +196,8 @@ const Main = () => {
           className="select-none shadow-sm shadow-4 w-[70%] text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
         >
           {files.length > 0 ? (
-            <span className="flex items-center jusify-center gap-2">
-              <span
-                className="
-              text-xl"
-              >
-                &times;
-              </span>
+            <span className="flex items-center justify-center gap-2">
+              <span className="text-xl">&times;</span>
               {files.map((file, index) => (
                 <span key={index} className="inline truncate">
                   {file.name}

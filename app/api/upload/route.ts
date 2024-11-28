@@ -4,6 +4,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Initialize the AI model
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+function base64ToGenerativePart(base64Data: string, mimeType: string) {
+  return {
+    inlineData: {
+      data: base64Data,  // Raw Base64 data (without the prefix)
+      mimeType: mimeType,
+    },
+  };
+}
+
 export async function POST(req: NextRequest) {
   try {
     if (!process.env.GEMINI_API_KEY) {
@@ -25,34 +34,39 @@ export async function POST(req: NextRequest) {
       3. If it is not food-related, simply respond with 'NOT FOOD'.
     `;
 
-    // Process images and generate AI response
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const responses = await Promise.all(
       images.map(async (imageBase64: string) => {
         try {
-          const result = await model.generateContent([
-            prompt,
-            {
-              fileData: {
-                fileUri: imageBase64,
-                mimeType: "image/jpeg",
-              },
-            },
-          ]);
+          const part = base64ToGenerativePart(imageBase64, "image/jpeg");
 
-          return result.response?.text() || "No response from the model.";
-        } catch (error) {
-          console.error("Error processing image:", error);
-          return "Error processing image.";
+          const result = await model.generateContent([prompt, part]);
+
+          return result.response.text() || "No response from the model.";
+        } catch (error ) {
+          if (error instanceof Error) {
+            console.error("Error:", error.message); // Safely access error properties
+            return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+          } else {
+            console.error("Unexpected error:", error);
+            return new Response(JSON.stringify({ message: "Error processing image" }), { status: 500 });
+          }
         }
       })
     );
 
-    return NextResponse.json({ message: "Files processed successfully.", analysis: responses }, { status: 200 });
+    return NextResponse.json(
+      { message: "Files processed successfully.", analysis: responses },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Error processing request:", error);
-    return NextResponse.json({ error: error || "Internal Server Error" }, { status: 500 });
+    if (error instanceof Error) {
+      console.error("Error:", error.message); // Safely access error properties
+      return new Response(JSON.stringify({ message: error.message }), { status: 500 });
+    } else {
+      console.error("Unexpected error:", error);
+      return new Response(JSON.stringify({ message: "An unknown error occurred" }), { status: 500 });
+    }
   }
-}
-
+  }
