@@ -23,7 +23,10 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(contents);
+      await navigator.clipboard.writeText(contents + `
+        
+      Youtube Video: ${youtubeLink}  
+        `);
       toast({
         description: "Copied to clipboard.",
       });
@@ -38,7 +41,10 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
   const handleDownload = () => {
     const doc = new jsPDF();
 
-    doc.text(contents, 10, 10)
+    doc.text(contents + `
+      
+      Youtube Video: ${youtubeLink}
+      `, 10, 10)
     doc.save("recipe.pdf")
   }
 
