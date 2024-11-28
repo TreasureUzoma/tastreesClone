@@ -29,7 +29,9 @@ export async function POST(req: NextRequest) {
     // Prepare prompt
     const prompt = `
       Analyze the uploaded image(s) and:
-      1. If it is cooked food reply like this: 
+      1. If it is cooked food reply like this:
+       FOOD NAME (in caps wrapped in bracket)
+      
        This food is know as <b>FoodNme</b>, also known as a or b. Then a fact about the food.\n\n
       <b>Recipe for [food name]</b>
        <b>Yields:</b>x serving, Prep time: x minutes, cook time, x minutes
@@ -52,10 +54,11 @@ export async function POST(req: NextRequest) {
       Pro Chef Tips:
       [Your stuff]
 
-      [youtube video link]
-
 
       2. If it is raw food, provide what you think its best to cook with and then like:
+
+       FOOD TO COOk NAME) (in caps wrapped in bracket)
+
       You have these ingredients available <b>items</b>\n\n
        The best food you can prepare is: Then a fact about the food. 
       Recipe for [food name]
@@ -79,11 +82,8 @@ export async function POST(req: NextRequest) {
       Pro Chef Tips:
       <em>[Your stuff]</em>
 
-      [youtube video link]
-
       3. If it is not food-related, simply respond with 'NOT FOOD'
 
-      PS: youtube video link should be an embedded link for iframe tag, dont write iframe tag only link only reply with the link not tag like this e.g (https://www.youtube.com/embed/watch/dQw4w9WgXcQ). but instead return https://www.youtube.com/embed/watch/videoid with an actual video id where  without watch?v= in the link, actual id, make sure id exist. thats the most important answer and it must match the refrence i gave u with different id, if you coudnt find, return any random video
       PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
       `;
 
@@ -108,9 +108,9 @@ export async function POST(req: NextRequest) {
         }
       })
     );
-
+    const embedLink = ""; //use regex to get the food name from gemini, pop it out it away from the analysis, then use youtube api to get embed links
     return NextResponse.json(
-      { message: "Files processed successfully.", analysis: responses },
+      { message: "Files processed successfully.", analysis: responses, embedLink: embedLink },
       { status: 200 }
     );
   } catch (error) {

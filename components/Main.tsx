@@ -260,7 +260,7 @@ const Main: React.FC = () => {
       >
         <label
           htmlFor="upload"
-          className="select-none shadow-sm shadow-4 w-[70%] text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
+          className="select-none shadow-sm shadow-4 w-[70%] overflow-hidden text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
         >
           {files.length > 0 ? (
             <span className="flex items-center justify-center gap-2">
@@ -268,9 +268,9 @@ const Main: React.FC = () => {
               {files.map((file, index) => (
                 <span
                   key={index}
-                  className="inline text-purple w-[60%] max-w-[100px] md:max-w-[250px] truncate"
+                  className="inline text-purple w-[60%] md:max-w-[250px]"
                 >
-                  {file.name}
+                  {file.name.length> 8 ? `${file.name.slice(0, 10)}...` : file.name}
                 </span>
               ))}
             </span>

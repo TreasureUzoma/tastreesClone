@@ -75,7 +75,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
       </div>
       <div className="w-[92%] px-3 rounded-lg py-8 max-w-[600px] shadow-[0_1px_3px_rgba(180,180,180,0.2)] flex flex-col gap-11">
         <ReactMarkdown className="text-[0.9rem] font-onest text-left pre-wrap">
-          {contents.replace(/\n/gi, '&nbsp;\n\n').replace(/(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/, "")}
+          {contents.replace(/\n/gi, '&nbsp;\n\n')}
         </ReactMarkdown>
         {youtubeLink && (
           <iframe
