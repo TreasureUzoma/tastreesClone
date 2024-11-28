@@ -173,14 +173,17 @@ const Main: React.FC = () => {
           });
           setIsLoading(false);
           setFiles([]);
+          return ;
         }
-        // Handle arrays with potential embedded YouTube links
+        else 
+        {// Handle arrays with potential embedded YouTube links
         const youtubeLink = data.analysis.find((item) =>
           /(https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+)/.test(item)
         );
         setYoutubeLink(youtubeLink || "");
         setResponseContent(data.analysis.join(" ")); // Join array elements for a readable response
         setReply(true);
+      }
       } else if (typeof data.analysis === "string") {
         if (/NOT FOUND/i.test(data.analysis)) {
           toast({
