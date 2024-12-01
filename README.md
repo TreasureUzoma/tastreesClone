@@ -1,6 +1,6 @@
-# TastressClone
+# TastreesClone
 
-TatressClone is an AI powered web applications built with Next.JS, that allows users to generate recipes from images of food or ingredients uploaded instantly. 
+TatreesClone is an AI powered web applications built with Next.JS, that allows users to generate recipes from images of food or ingredients uploaded instantly. 
 
 
 ## Features
@@ -68,5 +68,6 @@ This is the link to the original project
 
 -**Github**
 [TreasureUzoma](https://github.com/Treasureuzoma)
+
 -**X (Formerly Twitter)**
 [TreasureUzoma1](https://x.com/TreasureUzoma1)

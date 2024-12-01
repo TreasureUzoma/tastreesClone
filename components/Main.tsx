@@ -28,7 +28,7 @@ const Main = () => {
       fileName={files[0]?.name || ""}
     />
   ) : (
-    <div className="text-center mt-[8rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
+    <div className="text-center mt-[62px] md:mt-[50px] flex items-center justify-center flex-col gap-6">
       {isLoading && (
         <BlurScreen
           header={currentBlurMessage}
@@ -47,7 +47,7 @@ const Main = () => {
         >
           {currentWord}
         </mark>{" "}
-        <br className="sm:hidden" />
+        <br className="md:hidden" />
         Let Our AI Assist In The Prep
       </h1>
 

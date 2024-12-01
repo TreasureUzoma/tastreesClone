@@ -52,7 +52,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
   const formattedFileSize = formatFileSize(fileSize);
 
   return (
-    <div className="mt-[4rem] py-[2rem] md:mt-[9.4rem] overflow-y-auto flex flex-col items-center justify-center z-30 bg-white gap-10">
+    <div className="py-[2rem] mt-[62px] md:mt-[50px]] overflow-y-auto flex flex-col items-center justify-center z-30 bg-white gap-10">
       <div className="p-4 rounded-2xl bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
         <div className="w-full flex items-start justify-center gap-4">
           <span className="rounded-full p-1 bg-white border border-gray flex items-center justify-center shadow-md">
