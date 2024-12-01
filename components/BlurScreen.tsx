@@ -11,6 +11,7 @@ const BlurScreen = ({ header = "Lorem ipsum dolo sit amen", text = "This will on
           src="/images/dish.svg"
           width={255}
           height={255}
+          priority={true}
           className="animate-expand" // Apply expanding animation to the image
         />
         <div className="flex flex-col gap-2 text-gray text-center items-center justify-center">

@@ -57,6 +57,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
         <div className="w-full flex items-start justify-center gap-4">
           <span className="rounded-full p-1 bg-white border border-gray flex items-center justify-center shadow-md">
             <Image
+              priority={true}
               src="/images/avatar.svg"
               alt="Avatar"
               width={18}
@@ -70,6 +71,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
                 src="/images/checkboxbase.svg"
                 alt="Checkbox"
                 width={17}
+                priority={true}
                 height={17}
                 className=""
               />
@@ -81,7 +83,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
       </div>
       <div className="w-[92%] px-3 rounded-lg py-8 max-w-[600px] shadow-[0_1px_3px_rgba(180,180,180,0.2)] flex flex-col gap-11">
         <ReactMarkdown className="text-[0.9rem] font-onest text-left pre-wrap">
-          {contents.replace(/\n/gi, '&nbsp;\n\n')}
+          {contents.replace(/\n/gi, "&nbsp;\n\n")}
         </ReactMarkdown>
         {youtubeLink && (
           <iframe
@@ -95,7 +97,10 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
           />
         )}
         <div className="flex items-center justify-between font-medium">
-          <button onClick={() => handleDownload()} className="bg-purple text-[0.77rem] border-4 border-double text-white px-[0.96rem] py-[0.47rem] rounded-full flex items-center justify-center gap-2">
+          <button
+            onClick={() => handleDownload()}
+            className="bg-purple text-[0.77rem] border-4 border-double text-white px-[0.96rem] py-[0.47rem] rounded-full flex items-center justify-center gap-2"
+          >
             <UploadIcon className="fill-[white] rotate-180 w-[15px] h-[15px]" />
             <span>Download PDF</span>
           </button>
