@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
       Pro Chef Tips:
       <em>[Your stuff]</em>
 
-      3. If it is not food-related, simply respond with 'NOT FOOD'
+      3. If it is not food-related or none of the images are food-related, simply respond with 'NOT FOOD'
 
       PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
       `;
