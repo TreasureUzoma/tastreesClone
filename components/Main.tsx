@@ -280,10 +280,10 @@ const Main: React.FC = () => {
               ))}
             </span>
           ) : (
-            <>
+            <span className="text-[0.67rem] font-hairline">
               <UploadIcon />
-              <span className="text-[0.66rem]">Upload Image(s) | 5MB max</span>
-            </>
+              <span>Upload Image(s) | 5MB max</span>
+            </span>
           )}
         </label>
 
