@@ -62,7 +62,7 @@ I do not own the brand name **Tatrees**, every logo used is not my property and 
 
 ## Inspiration.
 This is the link to the original project
-(https://www.tatrees.xyz)[https://www.tatrees.xyz]
+[https://www.tatrees.xyz](https://www.tatrees.xyz)
 
 ## Contact
 
