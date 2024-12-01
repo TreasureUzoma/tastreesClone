@@ -58,11 +58,11 @@ const Main = () => {
 
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-[#fcfcfc] border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
+        className="bg-[#fbfbfb] border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
       >
         <label
           htmlFor="upload"
-          className="select-none bg-white shadow-sm w-[72%] overflow-hidden text-left tracking-[0px] font-[300] py-2 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
+          className="select-none bg-white shadow-sm w-[72%] overflow-hidden text-left tracking-[0px] font-[300] py-2 md:py-4 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
         >
           {files.length > 0 ? (
             <span className="flex items-center justify-center gap-2">
