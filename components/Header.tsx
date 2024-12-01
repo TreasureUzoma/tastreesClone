@@ -4,7 +4,7 @@ import Link from "next/link";
 const Header = () => {
   return (
     <header>
-      <nav className="flex items-center justify-center md:justify-between bg-[#f9f9f9] z-40 justify-center p-5 shadow-blue fixed top-0 left-0 right-0 shadow-sm md:shadow-none md:top-7 md:border md:border-purple md:border-opacity-10 md:bg-white md:rounded-full md:px-[1.7rem] md:py-[0.65rem] md:mx-auto md:w-[70%]">
+      <nav className="flex items-center justify-center md:justify-between bg-[#f9f9f9] z-40 justify-center p-5 shadow-[rgba(96,58,171,0.08)] shadow-sm fixed top-0 left-0 right-0 shadow-sm md:shadow-none md:top-7 md:border md:border-purple md:border-opacity-10 md:bg-white md:rounded-full md:px-[1.7rem] md:py-[0.65rem] md:mx-auto md:w-[70%]">
         <Image
           src="/images/logo.svg"
           alt="logo"

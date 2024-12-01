@@ -253,8 +253,8 @@ const Main: React.FC = () => {
       </h1>
 
       <p className="text-gray w-[88%] md:w-[70%] text-[0.9rem] md:text-[0.97rem] max-w-[680px]">
-        Share photos of the dish you plan to make or its ingredients, and
-        we&#39;ll create the ideal recipe for you.
+        Share photos of the dish you plan to make or its ingredients, and Tastrees
+        would create the perfect recipe for you instantly.
       </p>
 
       <form
@@ -280,7 +280,7 @@ const Main: React.FC = () => {
               ))}
             </span>
           ) : (
-            <span className="text-[0.67rem] font-hairline">
+            <span className="text-[0.67rem] font-hairline flex items-center justify-center gap-2">
               <UploadIcon />
               <span>Upload Image(s) | 5MB max</span>
             </span>
@@ -299,7 +299,7 @@ const Main: React.FC = () => {
         <button
           type="button"
           onClick={handleButtonClick}
-          className={`bg-purple text-[0.8rem] border-4 border-double text-white px-8 py-2 rounded-full ${
+          className={`bg-purple text-[0.77rem] border-4 border-double text-white px-8 py-2 rounded-full ${
             isLoading ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={isLoading}
