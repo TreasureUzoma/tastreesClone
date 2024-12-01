@@ -4,9 +4,9 @@ const UploadIcon = ({ className = "" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height="17px"
+      height="17.3px"
       viewBox="0 -960 960 960"
-      width="17px"
+      width="17.3px"
       fill="#696969"
       className={className}
     >
