@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import BlurScreen from "./BlurScreen";
-import Header from "./Header";
+import Fork from "./Fork";
 import UploadIcon from "./icons/UploadIcon";
 import ReplyUi from "./ReplyUi";
 import { useToast } from "@/hooks/use-toast";
@@ -229,7 +229,7 @@ const Main: React.FC = () => {
       fileName={files[0]?.name || ""}
     />
   ) : (
-    <div className="text-center mt-[7.2rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
+    <div className="text-center mt-[8rem] md:mt-[9.4rem] flex items-center justify-center flex-col gap-6">
       {isLoading && (
         <BlurScreen
           header={currentBlurMessage}
@@ -237,7 +237,7 @@ const Main: React.FC = () => {
         />
       )}
 
-      <Header />
+      <Fork />
 
       <h1 className="font-[800] text-[1.85rem] leading-[2rem] md:text-5xl text-darkblue tracking-[-2.4px] w-[90%] max-w-[600px]">
         What&#39;s For{" "}
@@ -259,11 +259,11 @@ const Main: React.FC = () => {
 
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-white border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
+        className="bg-[#fefefe] border border-purple mt-1 border-opacity-10 py-1 px-2 flex gap-2 items-center justify-between w-[88%] md:w-[70%] max-w-[600px] rounded-full"
       >
         <label
           htmlFor="upload"
-          className="select-none shadow-sm shadow-4 w-[70%] overflow-hidden text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
+          className="select-none bg-white shadow-sm shadow-4 w-[70%] overflow-hidden text-left py-3 px-5 rounded-full flex items-center justify-start text-gray text-[0.7rem] gap-2 cursor-pointer"
         >
           {files.length > 0 ? (
             <span className="flex items-center justify-center gap-2">
@@ -282,7 +282,7 @@ const Main: React.FC = () => {
           ) : (
             <>
               <UploadIcon />
-              <span>Upload Image(s)</span>
+              <span className="text-[0.66rem]">Upload Image(s) | 5MB max</span>
             </>
           )}
         </label>
