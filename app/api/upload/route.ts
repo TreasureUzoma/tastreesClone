@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     return new Response('Too many requests', { status: 429 });
   }
 
-  if (!origin || !origin.includes('https://tastreesclone.vercel.app')) {
+  if (!origin || !origin.includes('http://localhost:3000')) {
     return new Response('Forbidden', { status: 403 });
   }
 
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     const prompt = `
       Analyze the uploaded image(s) and:
       1. If it is cooked food reply like this:
-       FOOD NAME (in caps)
+       FOOD NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
       
        This food is know as <b>FoodNme</b>, also known as a or b. Then a fact about the food.\n\n
       <b>Recipe for [food name]</b>
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
 
       2. If it is raw food, provide what you think its best to cook with and then like:
 
-       FOOD TO COOk NAME (in caps)
+       FOOD TO COOk NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
 
       You have these ingredients available <b>items</b>\n\n
        The best food you can prepare is: Then a fact about the food. 

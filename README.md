@@ -58,11 +58,11 @@ This project is licensed under the MIT License.
 
 ## Disclaimer
 
-I do not own the brand name **Tatrees**, every logo used is not my property and not yours. The original developer is aware of this version so e cautious.
+I do not own the brand name **Tastrees**, every logo used is not my property and not yours. The original developer is aware of this version so e cautious.
 
 ## Inspiration.
 This is the link to the original project
-[https://www.tatrees.xyz](https://www.tatrees.xyz)
+[https://www.tastrees.xyz](https://www.tastrees.xyz)
 
 ## Contact
 

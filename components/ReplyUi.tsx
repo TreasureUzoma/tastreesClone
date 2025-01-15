@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown"
 import jsPDF from "jspdf";
+import Arrow from "./icons/Arrow";
 
 // Helper function to format file size
 const formatFileSize = (fileSize: string) => {
@@ -53,6 +54,14 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
 
   return (
     <div className="py-[2rem] mt-[62px] md:mt-[50px]] overflow-y-auto flex flex-col items-center justify-center z-30 bg-white gap-10">
+      <div className="w-[92%] max-w-[600px]">
+        <a href="/" className="bg-dark rounded-2xl mr-auto text-xs inline-flex items-center justify-center text-white p-2 gap-2 font-semibold">
+          <Arrow className="rotate-180"/>
+          <span>
+            Go home
+          </span>
+        </a>
+      </div>
       <div className="p-4 rounded-2xl bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
         <div className="w-full flex items-start justify-center gap-4">
           <span className="rounded-full p-1 bg-white border border-gray flex items-center justify-center shadow-md">
@@ -88,7 +97,7 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
         {youtubeLink && (
           <iframe
             width="100%"
-            height="100"
+            height="150"
             src={youtubeLink}
             title="Youtube Video"
             allowFullScreen

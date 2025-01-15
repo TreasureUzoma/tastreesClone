@@ -19,6 +19,7 @@ export default {
       backgroundColor: {
         purple: "#603AAB",
         darkblue: "#100240",
+        dark: "#111",
       },
       fontFamily: {
         geist: "Geist",
