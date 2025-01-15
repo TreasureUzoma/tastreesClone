@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     return new Response('Too many requests', { status: 429 });
   }
 
-  if (!origin || !origin.includes('http://localhost:3000')) {
+  if (!origin || !origin.includes('https://tastreesclone.vercel.app')) {
     return new Response('Forbidden', { status: 403 });
   }
 
