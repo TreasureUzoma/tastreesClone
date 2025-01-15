@@ -8,6 +8,7 @@ import Arrow from "./icons/Arrow";
 
 // Helper function to format file size
 const formatFileSize = (fileSize: string) => {
+
   const sizeInBytes = parseInt(fileSize, 10); // Convert size to a number
   if (isNaN(sizeInBytes)) return "0 KB"; // If size is invalid, return 0 KB
 
@@ -55,12 +56,12 @@ const ReplyUi = ({ fileName = "", fileSize = "", contents = "", youtubeLink = ""
   return (
     <div className="py-[2rem] mt-[62px] md:mt-[50px]] overflow-y-auto flex flex-col items-center justify-center z-30 bg-white gap-10">
       <div className="w-[92%] max-w-[600px]">
-        <a href="/" className="bg-dark rounded-2xl mr-auto text-xs inline-flex items-center justify-center text-white p-2 gap-2 font-semibold">
+        <button onClick={()=> window.location.reload()} className="bg-dark rounded-2xl mr-auto text-xs inline-flex items-center justify-center text-white p-2 gap-2 font-semibold">
           <Arrow className="rotate-180"/>
           <span>
             Go home
           </span>
-        </a>
+        </button>
       </div>
       <div className="p-4 rounded-2xl bg-[rgba(96,58,171,0.03)] flex items-center justify-center w-[92%] max-w-[600px]">
         <div className="w-full flex items-start justify-center gap-4">

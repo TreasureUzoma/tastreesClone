@@ -221,6 +221,7 @@ const useUtils = () => {
     reply,
     files,
     responseContent,
+    setReply,
     youtubeLink,
     currentBlurMessage,
     handleFileChange,
