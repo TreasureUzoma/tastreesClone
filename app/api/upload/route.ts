@@ -118,12 +118,12 @@ export async function POST(req: NextRequest) {
       [Your stuff]
 
 
-      2. If it is raw food, provide what you think its best to cook with and then like:
+      2. If it is raw food, provide what you think its best to cook with and then reply like:
 
-       FOOD TO COOk NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
+      FOOD TO COOk NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
 
       You have these ingredients available <b>items</b>\n\n
-       The best food you can prepare is: Then a fact about the food. 
+      The best food you can prepare is: Then a fact about the food. 
       Recipe for [food name]
       Yields:x serving, Prep time: x minutes, cook time, x minutes
 
@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
       PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
       `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const responses = await Promise.all(
       images.map(async (imageBase64: string) => {
