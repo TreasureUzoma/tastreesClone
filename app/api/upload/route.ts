@@ -12,7 +12,6 @@ function base64ToGenerativePart(base64Data: string, mimeType: string) {
   };
 }
 
-
 // Initialize the AI model
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -25,7 +24,7 @@ async function fetchYouTubeVideo(foodName: string): Promise<string | null> {
     }
 
     const youtubeSearchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(
-     "How to cook" + foodName
+      "How to cook" + foodName
     )}&key=${youtubeApiKey}`;
 
     const response = await fetch(youtubeSearchUrl);
@@ -43,8 +42,9 @@ async function fetchYouTubeVideo(foodName: string): Promise<string | null> {
 }
 
 export async function POST(req: NextRequest) {
-  const origin = req.headers.get('origin');
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('remote-addr') || '';
+  const origin = req.headers.get("origin");
+  const ip =
+    req.headers.get("x-forwarded-for") || req.headers.get("remote-addr") || "";
 
   const now = Date.now();
 
@@ -63,13 +63,12 @@ export async function POST(req: NextRequest) {
   rateLimitMap.set(ip, clientData);
 
   if (clientData.count > limit) {
-    return new Response('Too many requests', { status: 429 });
+    return new Response("Too many requests", { status: 429 });
   }
 
-  if (!origin || !origin.includes('https://tastreesclone.vercel.app')) {
-    return new Response('Forbidden', { status: 403 });
+  if (!origin || !origin.includes("https://tastreesclone.vercel.app")) {
+    return new Response("Forbidden", { status: 403 });
   }
-
 
   try {
     if (!process.env.GEMINI_API_KEY) {
@@ -89,66 +88,104 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Prepare prompt
+    // prompt
     const prompt = `
-      Analyze the uploaded image(s) and:
-      1. If it is cooked food reply like this:
-       FOOD NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
-      
-       This food is know as <b>FoodNme</b>, also known as a or b. Then a fact about the food.\n\n
-      <b>Recipe for [food name]</b>
-       <b>Yields:</b>x serving, Prep time: x minutes, cook time, x minutes
+You are a professional chef and food analyst. Analyze the uploaded image(s) carefully and respond **in clean Markdown only** — do not use HTML tags.
 
-      <b>Ingedients:</b>
-      [recipe in ordered list]
+---
 
-      Equipment:
-      [a paragraph of equipment]
+### Rules:
 
-      Instructions:
-      [do your stuff]
+1. **If it is cooked food**, reply starting with:
+FOOD NAME
+(Use uppercase letters and spaces only for the food name — so it can be matched by const foodNameMatch = response.match(/^[A-Z\\s]+/);)
 
-      Plating:
-      Serve [Foodname] as [your stuff]
+Then continue with:
 
-      Nutritional Value (per serving, approximate)
-      [your stuff]
+This food is known as **FoodName**, also known as _a_ or _b_. Then include one interesting fact about it.
 
-      Pro Chef Tips:
-      [Your stuff]
+---
 
+## Recipe for FoodName
 
-      2. If it is raw food, provide what you think its best to cook with and then reply like:
+**Yields:** x servings  
+**Prep time:** x minutes  
+**Cook time:** x minutes  
 
-      FOOD TO COOk NAME (in caps) [some thing this regex can catch, const foodNameMatch = response.match(/^[A-Z\s]+/); ]
+### Ingredients
+1. Ingredient 1  
+2. Ingredient 2  
+3. Ingredient 3  
 
-      You have these ingredients available <b>items</b>\n\n
-      The best food you can prepare is: Then a fact about the food. 
-      Recipe for [food name]
-      Yields:x serving, Prep time: x minutes, cook time, x minutes
+### Equipment
+Describe the main tools or kitchenware needed in a short paragraph.
 
-      Ingedients:
-      [recipe in ordered list]
+### Instructions
+Step-by-step cooking process in numbered points.
 
-      Equipment:
-      [a paragraph of equipment]
+### Plating
+How to serve **FoodName** (presentation ideas).
 
-      Instructions:
-      [do your stuff]
+### Nutritional Value (per serving, approximate)
+List key nutrition info such as calories, protein, fat, etc.
 
-      Plating:
-      Serve [Foodname] as [your stuff]
+### Pro Chef Tips
+Chef-level advice to improve or customize this dish.
 
-      Nutritional Value (per serving, approximate)
-      [your stuff]
+---
 
-      Pro Chef Tips:
-      <em>[Your stuff]</em>
+2. **If it is raw food**, reply starting with:
+FOOD TO COOK NAME
+(Use uppercase letters and spaces only for the name — same regex applies.)
 
-      3. If it is not food-related or none of the images are food-related, simply respond with 'NOT FOOD'
+Then continue with:
 
-      PS: Space your reply, add paragraphs, line breaks, bold texts etc, reply with amarkdown-like syntax, react-markdown is waiting for your response.
-      `;
+You have these ingredients available: **list them briefly**
+
+The best food you can prepare is **FoodName** — add a short fun fact.
+
+---
+
+## Recipe for FoodName
+
+**Yields:** x servings  
+**Prep time:** x minutes  
+**Cook time:** x minutes  
+
+### Ingredients
+1. Ingredient 1  
+2. Ingredient 2  
+3. Ingredient 3  
+
+### Equipment
+Describe the tools required.
+
+### Instructions
+Detailed but concise cooking steps.
+
+### Plating
+Serving and presentation ideas.
+
+### Nutritional Value (per serving, approximate)
+Nutritional breakdown.
+
+### Pro Chef Tips
+_Pro tips in italics._
+
+---
+
+3. **If none of the images are food-related**, simply respond:
+NOT FOOD
+
+---
+
+### Output requirements:
+- Use **Markdown only**, not HTML.
+- Use blank lines between sections.
+- Use headings (**##**, **###**) and bold text consistently.
+- Do not add code blocks.
+- Ensure the very first line always starts with the uppercase identifier (FOOD NAME / FOOD TO COOK NAME / NOT FOOD).
+`;
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
@@ -192,10 +229,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error:", error.message); // Safely access error properties
-      return new Response(
-        JSON.stringify({ message: error.message }),
-        { status: 500 }
-      );
+      return new Response(JSON.stringify({ message: error.message }), {
+        status: 500,
+      });
     } else {
       console.error("Unexpected error:", error);
       return new Response(
